@@ -5,6 +5,8 @@ namespace App\Entity;
 use App\Entity\Traits\CreatedAtTrait;
 use App\Entity\Traits\UpdatedAtTrait;
 use App\Repository\TeamRepository;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Gedmo\Mapping\Annotation as Gedmo;
 use Gedmo\SoftDeleteable\Traits\SoftDeleteableEntity;
@@ -49,6 +51,7 @@ class Team
      * @ORM\JoinColumn(name="id_division",onDelete="SET NULL")
      */
     private ?Division $division;
+
 
     public function getId(): ?int
     {
