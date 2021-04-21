@@ -2,13 +2,12 @@
 
 namespace App\DataFixtures;
 
-
 use App\Entity\Division;
-use App\Repository\DivisionRepository;
 use Doctrine\Bundle\FixturesBundle\Fixture;
+use Doctrine\Common\DataFixtures\OrderedFixtureInterface;
 use Doctrine\Persistence\ObjectManager;
 
-class DivisionFixture extends Fixture
+class DivisionFixture extends Fixture implements OrderedFixtureInterface
 {
     private array $divisions = ['A', 'B'];
 
@@ -22,5 +21,10 @@ class DivisionFixture extends Fixture
             $manager->persist($divisionRecord);
         }
         $manager->flush();
+    }
+
+    public function getOrder(): int
+    {
+        return 1;
     }
 }
