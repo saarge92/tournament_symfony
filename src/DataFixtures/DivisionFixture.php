@@ -3,6 +3,7 @@
 namespace App\DataFixtures;
 
 use App\Entity\Division;
+use App\Repository\DivisionRepository;
 use Doctrine\Bundle\FixturesBundle\Fixture;
 use Doctrine\Common\DataFixtures\OrderedFixtureInterface;
 use Doctrine\Persistence\ObjectManager;
@@ -10,6 +11,12 @@ use Doctrine\Persistence\ObjectManager;
 class DivisionFixture extends Fixture implements OrderedFixtureInterface
 {
     private array $divisions = ['A', 'B'];
+    private DivisionRepository $divisionRepository;
+
+    public function __construct(DivisionRepository $divisionRepository)
+    {
+        $this->divisionRepository = $divisionRepository;
+    }
 
     /**
      * @throws \Doctrine\ORM\ORMException
@@ -17,8 +24,11 @@ class DivisionFixture extends Fixture implements OrderedFixtureInterface
     public function load(ObjectManager $manager)
     {
         foreach ($this->divisions as $divisionName) {
-            $divisionRecord = new Division($divisionName);
-            $manager->persist($divisionRecord);
+            $divisionRecordExist = $this->divisionRepository->findOneBy(['name' => $divisionName]);
+            if (!$divisionRecordExist) {
+                $divisionRecord = new Division($divisionName);
+                $manager->persist($divisionRecord);
+            }
         }
         $manager->flush();
     }
