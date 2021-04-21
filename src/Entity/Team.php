@@ -27,6 +27,8 @@ class Team
     {
         $this->setName($name);
         $this->setDivision($division);
+        $this->tournamentResults = new ArrayCollection();
+        $this->resultFinals = new ArrayCollection();
     }
 
     /**
@@ -51,6 +53,16 @@ class Team
      * @ORM\JoinColumn(name="id_division",onDelete="SET NULL")
      */
     private ?Division $division;
+
+    /**
+     * @ORM\OneToMany(targetEntity=TournamentResult::class, mappedBy="team")
+     */
+    private $tournamentResults;
+
+    /**
+     * @ORM\OneToMany(targetEntity=ResultFinal::class, mappedBy="team")
+     */
+    private $resultFinals;
 
 
     public function getId(): ?int
@@ -78,6 +90,66 @@ class Team
     public function setDivision(?Division $division): self
     {
         $this->division = $division;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|TournamentResult[]
+     */
+    public function getTournamentResults(): Collection
+    {
+        return $this->tournamentResults;
+    }
+
+    public function addTournamentResult(TournamentResult $tournamentResult): self
+    {
+        if (!$this->tournamentResults->contains($tournamentResult)) {
+            $this->tournamentResults[] = $tournamentResult;
+            $tournamentResult->setTeam($this);
+        }
+
+        return $this;
+    }
+
+    public function removeTournamentResult(TournamentResult $tournamentResult): self
+    {
+        if ($this->tournamentResults->removeElement($tournamentResult)) {
+            // set the owning side to null (unless already changed)
+            if ($tournamentResult->getTeam() === $this) {
+                $tournamentResult->setTeam(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|ResultFinal[]
+     */
+    public function getResultFinals(): Collection
+    {
+        return $this->resultFinals;
+    }
+
+    public function addResultFinal(ResultFinal $resultFinal): self
+    {
+        if (!$this->resultFinals->contains($resultFinal)) {
+            $this->resultFinals[] = $resultFinal;
+            $resultFinal->setTeam($this);
+        }
+
+        return $this;
+    }
+
+    public function removeResultFinal(ResultFinal $resultFinal): self
+    {
+        if ($this->resultFinals->removeElement($resultFinal)) {
+            // set the owning side to null (unless already changed)
+            if ($resultFinal->getTeam() === $this) {
+                $resultFinal->setTeam(null);
+            }
+        }
 
         return $this;
     }

@@ -5,6 +5,7 @@ namespace App\Entity;
 use App\Entity\Traits\CreatedAtTrait;
 use App\Entity\Traits\UpdatedAtTrait;
 use App\Repository\TournamentRepository;
+use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Doctrine\ORM\PersistentCollection;
@@ -40,10 +41,22 @@ class Tournament
      */
     private ?PersistentCollection $tournamentMatches;
 
+    /**
+     * @ORM\OneToMany(targetEntity=TournamentResult::class, mappedBy="tournament")
+     */
+    private $tournamentResults;
+
+    /**
+     * @ORM\OneToMany(targetEntity=ResultFinal::class, mappedBy="Tournament")
+     */
+    private $resultFinals;
+
     public function __construct(string $name)
     {
         $this->setName($name);
         $this->tournamentMatches = null;
+        $this->tournamentResults = new ArrayCollection();
+        $this->resultFinals = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -87,6 +100,66 @@ class Tournament
             // set the owning side to null (unless already changed)
             if ($tournamentMatch->getIdTournament() === $this) {
                 $tournamentMatch->setTournament(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|TournamentResult[]
+     */
+    public function getTournamentResults(): Collection
+    {
+        return $this->tournamentResults;
+    }
+
+    public function addTournamentResult(TournamentResult $tournamentResult): self
+    {
+        if (!$this->tournamentResults->contains($tournamentResult)) {
+            $this->tournamentResults[] = $tournamentResult;
+            $tournamentResult->setTournament($this);
+        }
+
+        return $this;
+    }
+
+    public function removeTournamentResult(TournamentResult $tournamentResult): self
+    {
+        if ($this->tournamentResults->removeElement($tournamentResult)) {
+            // set the owning side to null (unless already changed)
+            if ($tournamentResult->getTournament() === $this) {
+                $tournamentResult->setTournament(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|ResultFinal[]
+     */
+    public function getResultFinals(): Collection
+    {
+        return $this->resultFinals;
+    }
+
+    public function addResultFinal(ResultFinal $resultFinal): self
+    {
+        if (!$this->resultFinals->contains($resultFinal)) {
+            $this->resultFinals[] = $resultFinal;
+            $resultFinal->setTournament($this);
+        }
+
+        return $this;
+    }
+
+    public function removeResultFinal(ResultFinal $resultFinal): self
+    {
+        if ($this->resultFinals->removeElement($resultFinal)) {
+            // set the owning side to null (unless already changed)
+            if ($resultFinal->getTournament() === $this) {
+                $resultFinal->setTournament(null);
             }
         }
 
