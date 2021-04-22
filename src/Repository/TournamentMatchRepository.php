@@ -19,32 +19,14 @@ class TournamentMatchRepository extends ServiceEntityRepository
         parent::__construct($registry, TournamentMatch::class);
     }
 
-    // /**
-    //  * @return TournamentMatch[] Returns an array of TournamentMatch objects
-    //  */
-    /*
-    public function findByExampleField($value)
+    /**
+     * @throws \Doctrine\ORM\ORMException
+     * @throws \Doctrine\ORM\OptimisticLockException
+     */
+    public function save(TournamentMatch $tournamentMatch): void
     {
-        return $this->createQueryBuilder('t')
-            ->andWhere('t.exampleField = :val')
-            ->setParameter('val', $value)
-            ->orderBy('t.id', 'ASC')
-            ->setMaxResults(10)
-            ->getQuery()
-            ->getResult()
-        ;
+        $this->_em->persist($tournamentMatch);
+        $this->_em->flush();
     }
-    */
 
-    /*
-    public function findOneBySomeField($value): ?TournamentMatch
-    {
-        return $this->createQueryBuilder('t')
-            ->andWhere('t.exampleField = :val')
-            ->setParameter('val', $value)
-            ->getQuery()
-            ->getOneOrNullResult()
-        ;
-    }
-    */
 }

@@ -19,6 +19,7 @@ class TournamentMatch
     use CreatedAtTrait;
     use UpdatedAtTrait;
     use SoftDeleteableEntity;
+
     /**
      * @ORM\Id
      * @ORM\GeneratedValue
@@ -73,6 +74,24 @@ class TournamentMatch
      * @ORM\Column(type="integer", name="count_goal_team_guest")
      */
     private int $countGoalTeamGuest;
+
+    public function __construct(
+        Division $division,
+        Team $teamHome,
+        Team $teamGuest,
+        int $countGoalTeamHome,
+        int $countGoalTeamGuest,
+        Stage $stage,
+        Tournament $tournament
+    ) {
+        $this->setDivision($division);
+        $this->setTeamHome($teamHome);
+        $this->setTeamGuest($teamGuest);
+        $this->setCountGoalTeamHome($countGoalTeamHome);
+        $this->setCountGoalTeamGuest($countGoalTeamGuest);
+        $this->setStage($stage);
+        $this->setTournament($tournament);
+    }
 
     public function getId(): ?int
     {

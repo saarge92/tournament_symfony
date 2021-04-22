@@ -3,8 +3,11 @@
 namespace App\Repository;
 
 use App\Entity\Tournament;
+use App\Entity\TournamentResult;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
+
+use function Doctrine\ORM\QueryBuilder;
 
 /**
  * @method Tournament|null find($id, $lockMode = null, $lockVersion = null)
@@ -19,32 +22,35 @@ class TournamentRepository extends ServiceEntityRepository
         parent::__construct($registry, Tournament::class);
     }
 
-    // /**
-    //  * @return Tournament[] Returns an array of Tournament objects
-    //  */
-    /*
-    public function findByExampleField($value)
+    /**
+     * @throws \Doctrine\ORM\ORMException
+     */
+    public function createTournament(Tournament $tournament): void
     {
-        return $this->createQueryBuilder('t')
-            ->andWhere('t.exampleField = :val')
-            ->setParameter('val', $value)
-            ->orderBy('t.id', 'ASC')
-            ->setMaxResults(10)
-            ->getQuery()
-            ->getResult()
-        ;
+        $this->_em->persist($tournament);
+        $this->_em->flush();
     }
-    */
 
-    /*
-    public function findOneBySomeField($value): ?Tournament
+    public function getUnsettledTournaments(): Tournament
     {
-        return $this->createQueryBuilder('t')
-            ->andWhere('t.exampleField = :val')
-            ->setParameter('val', $value)
-            ->getQuery()
-            ->getOneOrNullResult()
-        ;
+        $queryBuilder = $this->_em->createQueryBuilder();
+        return $queryBuilder->select('t')->from(Tournament::class, 't')->where(
+            $queryBuilder->expr()->not(
+                $queryBuilder->expr()->exists(
+                    $queryBuilder->select('tr')->from(TournamentResult::class, 'tr')
+                        ->where('tr.id_tournament = t.id')
+                )
+            )
+        )->getQuery()->getResult();
     }
-    */
+
+    public function getRandomTournament(): Tournament
+    {
+        return $this->createQueryBuilder('q')
+            ->addSelect('RAND() as HIDDEN rand')
+            ->addOrderBy('rand')
+            ->setMaxResults(1)
+            ->getQuery()
+            ->getResult();
+    }
 }
