@@ -19,32 +19,21 @@ class ResultFinalRepository extends ServiceEntityRepository
         parent::__construct($registry, ResultFinal::class);
     }
 
-    // /**
-    //  * @return ResultFinal[] Returns an array of ResultFinal objects
-    //  */
-    /*
-    public function findByExampleField($value)
+    /**
+     * @return ResultFinal[]
+     */
+    public function getFinaleResultByTournamentId(int $idTournament): array
     {
-        return $this->createQueryBuilder('r')
-            ->andWhere('r.exampleField = :val')
-            ->setParameter('val', $value)
-            ->orderBy('r.id', 'ASC')
-            ->setMaxResults(10)
-            ->getQuery()
-            ->getResult()
-        ;
+        return $this->findBy(['idTournament' => $idTournament], ['place' => 'desc']);
     }
-    */
 
-    /*
-    public function findOneBySomeField($value): ?ResultFinal
+    /**
+     * @throws \Doctrine\ORM\OptimisticLockException
+     * @throws \Doctrine\ORM\ORMException
+     */
+    public function save(ResultFinal $resultFinal): void
     {
-        return $this->createQueryBuilder('r')
-            ->andWhere('r.exampleField = :val')
-            ->setParameter('val', $value)
-            ->getQuery()
-            ->getOneOrNullResult()
-        ;
+        $this->_em->persist($resultFinal);
+        $this->_em->flush();
     }
-    */
 }

@@ -51,9 +51,11 @@ class ResultFinal
      */
     private int $place;
 
-    public function getId(): ?int
+    public function __construct(Team $team, Tournament $tournament, int $place)
     {
-        return $this->id;
+        $this->setTeam($team);
+        $this->setTournament($tournament);
+        $this->setPlace($place);
     }
 
     public function getTeam(): Team

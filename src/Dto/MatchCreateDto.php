@@ -4,7 +4,7 @@ namespace App\Dto;
 
 class MatchCreateDto
 {
-    public int $idDivision;
+    public ?int $idDivision;
     public int $idTeamHome;
     public int $idTeamGuest;
     public int $idTournament;
@@ -13,7 +13,7 @@ class MatchCreateDto
     public int $countGoalTeamGuest;
 
     public function __construct(
-        int $idDivision,
+        ?int $idDivision,
         int $idTeamHome,
         int $idTeamGuest,
         int $idTournament,

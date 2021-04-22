@@ -88,7 +88,7 @@ class TournamentMatch
     private int $countGoalTeamGuest;
 
     public function __construct(
-        Division $division,
+        ?Division $division,
         Team $teamHome,
         Team $teamGuest,
         int $countGoalTeamHome,
