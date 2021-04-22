@@ -70,10 +70,10 @@ class TournamentResultService implements TournamentResultServiceInterface
         }
 
         $existedRecordTeamResult = $this->tournamentResultRepository->findOneBy(
-            ['id_team' => $idTeam, 'id_tournament' => $idTournament]
+            ['idTeam' => $idTeam, 'idTournament' => $idTournament]
         );
         if (!$existedRecordTeamResult) {
-            $tournamentResult = new TournamentResult($tournament, null, $newPoint);
+            $tournamentResult = new TournamentResult($tournament, $team, $newPoint);
             $this->tournamentResultRepository->save(
                 $tournamentResult
             );
@@ -87,6 +87,6 @@ class TournamentResultService implements TournamentResultServiceInterface
 
     public function getTeamResultByTeamAndTournament(int $idTeam, int $idTournament): ?TournamentResult
     {
-        return $this->tournamentResultRepository->findOneBy(['id_team' => $idTeam, 'id_tournament' => $idTournament]);
+        return $this->tournamentResultRepository->findOneBy(['idTeam' => $idTeam, 'idTournament' => $idTournament]);
     }
 }

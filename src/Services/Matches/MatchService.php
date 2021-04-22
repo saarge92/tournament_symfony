@@ -88,10 +88,10 @@ class MatchService implements MatchServiceInterface
     ): ?TournamentMatch {
         return $this->tournamentMatchRepository->findOneBy(
             [
-                'id_team_home' => $idHomeTeam,
-                'id_team_guest' => $idTeamGuest,
-                'id_tournament' => $tournamentId,
-                'id_stage' => $idStage
+                'idTeamHome' => $idHomeTeam,
+                'idTeamGuest' => $idTeamGuest,
+                'tournamentId' => $tournamentId,
+                'stageId' => $idStage
             ]
         );
     }

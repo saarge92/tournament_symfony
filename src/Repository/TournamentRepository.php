@@ -51,6 +51,6 @@ class TournamentRepository extends ServiceEntityRepository
             ->addOrderBy('rand')
             ->setMaxResults(1)
             ->getQuery()
-            ->getResult();
+            ->getOneOrNullResult();
     }
 }

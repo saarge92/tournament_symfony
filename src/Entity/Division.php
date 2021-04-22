@@ -44,13 +44,13 @@ class Division
     /**
      * @ORM\OneToMany(targetEntity=TournamentMatch::class, mappedBy="id_division")
      */
-    private $tournamentMatches;
+    private ?PersistentCollection $tournamentMatches;
 
     public function __construct(string $name)
     {
         $this->setName($name);
         $this->teams = null;
-        $this->tournamentMatches = new ArrayCollection();
+        $this->tournamentMatches = null;
     }
 
     public function getId(): ?int
@@ -78,6 +78,14 @@ class Division
         return $this->tournamentMatches;
     }
 
+    /**
+     * @return PersistentCollection|null
+     */
+    public function getTeams(): ?PersistentCollection
+    {
+        return $this->teams;
+    }
+
     public function addTournamentMatch(TournamentMatch $tournamentMatch): self
     {
         if (!$this->tournamentMatches->contains($tournamentMatch)) {
@@ -92,8 +100,8 @@ class Division
     {
         if ($this->tournamentMatches->removeElement($tournamentMatch)) {
             // set the owning side to null (unless already changed)
-            if ($tournamentMatch->getIdDivision() === $this) {
-                $tournamentMatch->setIdDivision(null);
+            if ($tournamentMatch->getDivision() === $this) {
+                $tournamentMatch->setDivision(null);
             }
         }
 

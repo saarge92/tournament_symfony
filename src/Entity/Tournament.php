@@ -59,7 +59,7 @@ class Tournament
         $this->resultFinals = new ArrayCollection();
     }
 
-    public function getId(): ?int
+    public function getId(): int
     {
         return $this->id;
     }
@@ -98,7 +98,7 @@ class Tournament
     {
         if ($this->tournamentMatches->removeElement($tournamentMatch)) {
             // set the owning side to null (unless already changed)
-            if ($tournamentMatch->getIdTournament() === $this) {
+            if ($tournamentMatch->getTournament() === $this) {
                 $tournamentMatch->setTournament(null);
             }
         }

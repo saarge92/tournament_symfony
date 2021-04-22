@@ -28,4 +28,21 @@ class TournamentResultRepository extends ServiceEntityRepository
         $this->_em->persist($tournamentResult);
         $this->_em->flush();
     }
+
+
+    /**
+     * @throws \Doctrine\DBAL\Driver\Exception
+     * @throws \Doctrine\DBAL\Exception
+     */
+    public function getTournamentResultByTournamentIdGroupedByDivision(int $tournamentId): array
+    {
+        $sql = "
+        select * from divisions d inner join teams t on t.id_division = d.id
+        inner join tournament_results tr on tr.id_team = t.id where tr.id_tournament = :tournament_id
+        order by d.id, t.id
+        ";
+        $statement = $this->getEntityManager()->getConnection()->prepare($sql);
+        $statement->bindParam('tournament_id', $tournamentId);
+        return $statement->executeQuery()->fetchAllAssociative();
+    }
 }

@@ -35,15 +35,24 @@ class TournamentMatchRepository extends ServiceEntityRepository
      */
     public function getMatchesByTeamIdAndTournament(int $idTeam, int $tournamentId, int $stageId): array
     {
-        $sql = "
-            SELECT * from matches where (id_team_home = :team_home OR id_team_guest = :team_guest) AND (id_tournament = :id_tournament and id_stage = :id_stage)
-            order by id asc
-        ";
-        $query = $this->getEntityManager()->getConnection()->prepare($sql);
-        $query->bindParam("team_home", $idTeam);
-        $query->bindParam("team_guest", $idTeam);
-        $query->bindParam("id_tournament", $tournamentId);
-        $query->bindParam("id_stage", $stageId);
-        return $query->executeQuery()->fetchAllAssociative();
+//        $sql = "
+//            SELECT * from matches where (id_team_home = :team_home OR id_team_guest = :team_guest) AND (id_tournament = :id_tournament and id_stage = :id_stage)
+//            order by id asc
+//        ";
+//        $query = $this->getEntityManager()->getConnection()->prepare($sql);
+//        $query->bindParam("team_home", $idTeam);
+//        $query->bindParam("team_guest", $idTeam);
+//        $query->bindParam("id_tournament", $tournamentId);
+//        $query->bindParam("id_stage", $stageId);
+//        return $query->executeQuery()->fetchAllAssociative();
+        $statement = $this->createQueryBuilder('m')->addSelect(
+            'select * from App\Entity\TournamentMatch where 
+            (id_team_home = :team_home OR id_team_guest = :team_guest) AND (id_tournament = :id_tournament and id_stage = :id_stage) order by id asc'
+        );
+        $statement->setParameter("team_home", $idTeam);
+        $statement->setParameter("team_guest", $idTeam);
+        $statement->setParameter("id_tournament", $tournamentId);
+        $statement->setParameter("id_stage", $stageId);
+        return $statement->getQuery()->getArrayResult();
     }
 }

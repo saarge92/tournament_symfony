@@ -30,7 +30,7 @@ class TournamentResult
     private Team $team;
 
     /**
-     * @Column(type="integer", nullable=false, name="id_team")
+     * @Column(type="integer", name="id_team")
      * @Id
      */
     private int $idTeam;
@@ -67,7 +67,7 @@ class TournamentResult
     public function setTeam(Team $team): self
     {
         $this->team = $team;
-
+        $this->idTeam = $team->getId();
         return $this;
     }
 
@@ -79,7 +79,7 @@ class TournamentResult
     public function setTournament(Tournament $tournament): self
     {
         $this->tournament = $tournament;
-
+        $this->idTournament = $tournament->getId();
         return $this;
     }
 

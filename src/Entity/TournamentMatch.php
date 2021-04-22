@@ -57,13 +57,25 @@ class TournamentMatch
 
     /**
      * @ORM\ManyToOne(targetEntity=Tournament::class, inversedBy="tournamentMatches")
+     * @ORM\JoinColumn(name="tournament_id", onDelete="RESTRICT")
      */
     private ?Tournament $tournament;
 
     /**
+     * @ORM\Column(name="tournament_id", type="integer", nullable=false)
+     */
+    private int $tournamentId;
+
+    /**
      * @ORM\ManyToOne(targetEntity=Stage::class, inversedBy="tournamentMatches")
+     * @ORM\JoinColumn(name="")
      */
     private ?Stage $stage;
+
+    /**
+     * @ORM\Column(type="integer", nullable=false, name="stage_id")
+     */
+    private int $stageId;
 
     /**
      * @ORM\Column(type="integer", name="count_goal_team_home")
@@ -98,6 +110,26 @@ class TournamentMatch
         return $this->id;
     }
 
+    public function getStageId(): int
+    {
+        return $this->stageId;
+    }
+
+    public function getTournamentId(): int
+    {
+        return $this->tournamentId;
+    }
+
+    public function getIdTeamHome(): ?int
+    {
+        return $this->idTeamHome;
+    }
+
+    public function getIdTeamGuest(): ?int
+    {
+        return $this->idTeamGuest;
+    }
+
     public function getDivision(): ?Division
     {
         return $this->division;
@@ -110,7 +142,7 @@ class TournamentMatch
         return $this;
     }
 
-    public function getIdTeamHome(): ?Team
+    public function getTeamHome(): ?Team
     {
         return $this->teamHome;
     }
@@ -134,7 +166,7 @@ class TournamentMatch
         return $this;
     }
 
-    public function getIdTournament(): ?Tournament
+    public function getTournament(): ?Tournament
     {
         return $this->tournament;
     }

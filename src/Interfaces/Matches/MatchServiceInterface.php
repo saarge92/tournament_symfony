@@ -16,5 +16,5 @@ interface MatchServiceInterface
         int $idStage
     ): ?TournamentMatch;
 
-    public function getMatchesForTeam(int $teamId, int $tournament, int $idStage);
+    public function getMatchesForTeam(int $teamId, int $tournament, int $idStage): array;
 }
