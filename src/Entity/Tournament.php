@@ -42,21 +42,21 @@ class Tournament
     private ?PersistentCollection $tournamentMatches;
 
     /**
-     * @ORM\OneToMany(targetEntity=TournamentResult::class, mappedBy="tournament")
+     * @ORM\OneToMany(targetEntity=TournamentResult::class, mappedBy="tournament", fetch="LAZY")
      */
-    private $tournamentResults;
+    private ?PersistentCollection $tournamentResults;
 
     /**
-     * @ORM\OneToMany(targetEntity=ResultFinal::class, mappedBy="Tournament")
+     * @ORM\OneToMany(targetEntity=ResultFinal::class, mappedBy="Tournament", fetch="LAZY")
      */
-    private $resultFinals;
+    private ?PersistentCollection $resultFinals;
 
     public function __construct(string $name)
     {
         $this->setName($name);
         $this->tournamentMatches = null;
-        $this->tournamentResults = new ArrayCollection();
-        $this->resultFinals = new ArrayCollection();
+        $this->tournamentResults = null;
+        $this->resultFinals = null;
     }
 
     public function getId(): int
