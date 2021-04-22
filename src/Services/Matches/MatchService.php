@@ -80,13 +80,28 @@ class MatchService implements MatchServiceInterface
         return $tournamentMatch;
     }
 
-    public function getMatchInfoOnTournamentStage(int $idHomeTeam, int $idTeamGuest, int $tournamentId, int $idStage)
-    {
-        // TODO: Implement getMatchInfoOnTournamentStage() method.
+    public function getMatchInfoOnTournamentStage(
+        int $idHomeTeam,
+        int $idTeamGuest,
+        int $tournamentId,
+        int $idStage
+    ): ?TournamentMatch {
+        return $this->tournamentMatchRepository->findOneBy(
+            [
+                'id_team_home' => $idHomeTeam,
+                'id_team_guest' => $idTeamGuest,
+                'id_tournament' => $tournamentId,
+                'id_stage' => $idStage
+            ]
+        );
     }
 
-    public function getMatchesForTeam(int $teamId, int $tournament, int $idStage)
+    /**
+     * @return TournamentMatch[]
+     * @throws \Doctrine\DBAL\Driver\Exception
+     */
+    public function getMatchesForTeam(int $teamId, int $tournament, int $idStage): array
     {
-        // TODO: Implement getMatchesForTeam() method.
+        return $this->tournamentMatchRepository->getMatchesByTeamIdAndTournament($teamId, $tournament, $idStage);
     }
 }
