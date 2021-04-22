@@ -34,7 +34,7 @@ class TournamentResultRepository extends ServiceEntityRepository
      * @throws \Doctrine\DBAL\Driver\Exception
      * @throws \Doctrine\DBAL\Exception
      */
-    public function getTournamentResultByTournamentIdGroupedByDivision(int $tournamentId): array
+    public function getTournamentResultByTournamentId(int $tournamentId): array
     {
         $sql = "
         select * from divisions d inner join teams t on t.id_division = d.id

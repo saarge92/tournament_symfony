@@ -2,6 +2,8 @@
 
 namespace App\Services\Tournaments;
 
+use App\Dto\Responses\QualificationGenerationResponse;
+use App\Dto\Responses\TableQualificationElement;
 use App\Entity\Tournament;
 use App\Interfaces\Tournaments\QualificationServiceInterface;
 use App\Repository\DivisionRepository;
@@ -30,21 +32,23 @@ class QualificationService implements QualificationServiceInterface
     }
 
     /**
-     * @return array Вернем массив с данными турнира
-     * @throws \Exception|\Doctrine\DBAL\Driver\Exception
+     * @param int $tournamentId
+     * @return QualificationGenerationResponse
+     * @throws \Doctrine\DBAL\Driver\Exception
+     * @throws \Doctrine\DBAL\Exception
      */
-    public function getQualificationTournamentResult(int $tournamentId): array
+    public function getQualificationTournamentResult(int $tournamentId): ?QualificationGenerationResponse
     {
         $tournament = $this->tournamentRepository->find($tournamentId);
         if (!$tournament) {
-            return [];
+            return null;
         }
 
-        $tournamentResults = $this->tournamentResultRepository->getTournamentResultByTournamentIdGroupedByDivision(
+        $tournamentResults = $this->tournamentResultRepository->getTournamentResultByTournamentId(
             $tournamentId
         );
         if (count($tournamentResults) <= 0) {
-            return [];
+            return null;
         }
         return $this->generateResponseForTournament($tournamentResults, $tournament);
     }
@@ -52,20 +56,37 @@ class QualificationService implements QualificationServiceInterface
     /**
      * @throws \Doctrine\DBAL\Driver\Exception
      */
-    private function generateResponseForTournament(iterable $tournamentResults, Tournament $tournament): array
-    {
-        $response['tournament_id'] = $tournament->getId();
-        $response['tournament_name'] = $tournament->getName();
-
-        foreach ($tournamentResults as $divisionIndex => $divisionResults) {
-            $tableRow['division_id'] = $divisionIndex;
+    private function generateResponseForTournament(
+        array $tournamentResults,
+        Tournament $tournament
+    ): QualificationGenerationResponse {
+        $response = new QualificationGenerationResponse();
+        $response->tournamentId = $tournament->getId();
+        $response->tournamentName = $tournament->getName();
+        $uniqueDivisionIndexes = array_unique(
+            array_map(
+                function ($element) {
+                    return $element['id_division'];
+                },
+                $tournamentResults
+            )
+        );
+        foreach ($uniqueDivisionIndexes as $divisionIndex) {
+            $tableRow = new TableQualificationElement();
+            $tableRow->divisionId = $divisionIndex;
             $division = $this->divisionRepository->find($divisionIndex);
-            $division ? $tableRow['division_name'] = $division->getName() : $tableRow['division_name'] = null;
-
+            $division ? $tableRow->divisionName = $division->getName() : $tableRow->divisionName = "";
+            $divisionResults = array_filter(
+                $tournamentResults,
+                function ($element) use ($divisionIndex) {
+                    return $element['id_division'] == $divisionIndex;
+                }
+            );
             $this->formatResponseForEveryDivisions($divisionResults, $tournament, $tableRow);
-            $response['tables'][] = $tableRow;
+            $response->tables[] = $tableRow;
             $tableRow = [];
         }
+
         return $response;
     }
 
@@ -73,34 +94,46 @@ class QualificationService implements QualificationServiceInterface
      * @throws \Doctrine\DBAL\Driver\Exception
      */
     private function formatResponseForEveryDivisions(
-        iterable $divisionResults,
+        array $divisionResults,
         Tournament $tournament,
-        array &$tableRow
+        TableQualificationElement &$tableRow
     ) {
         foreach ($divisionResults as $divisionResult) {
             $matchRow = [];
             $matchResults = $this->matchRepository->getMatchesByTeamIdAndTournament(
-                $divisionResult->id_team,
+                $divisionResult['id_team'],
                 $tournament->getId(),
                 1
             );
             foreach ($matchResults as $matchResult) {
-                if ($matchResult->getIdTeamHome() == $divisionResult->id_team) {
-                    $teamGuest = $divisionResults->where('id', $matchResult->getIdTeamGuest())->first();
-
-                    $matchRow[$divisionResult->name][$teamGuest->name] = $matchResult->getCountGoalTeamHome() . ":"
-                        . $matchResult->getCountGoalTeamGuest();
+                if ($matchResult['idTeamHome'] == $divisionResult['id_team']) {
+                    $teamGuest = array_values(
+                        array_filter(
+                            $divisionResults,
+                            function ($element) use ($matchResult) {
+                                return $element['id'] == $matchResult['idTeamGuest'];
+                            }
+                        )
+                    )[0];
+                    $matchRow[$divisionResult['name']][$teamGuest['name']] = $matchResult['countGoalTeamHome'] . ":"
+                        . $matchResult['countGoalTeamGuest'];
                 } else {
-                    if ($matchResult->getIdTeamGuest() == $divisionResult->id_team) {
-                        $teamGuest = $divisionResults->where('id', $matchResult->getIdTeamHome())->first();
-
-                        $matchRow[$divisionResult->name][$teamGuest->name] = $matchResult->getCountGoalTeamGuest() . ":"
-                            . $matchResult->getCountGoalTeamHome();
+                    if ($matchResult['idTeamGuest'] == $divisionResult['id_team']) {
+                        $teamGuest = array_values(
+                            array_filter(
+                                $divisionResults,
+                                function ($element) use ($matchResult) {
+                                    return $element['id'] == $matchResult['idTeamHome'];
+                                }
+                            )
+                        )[0];
+                        $matchRow[$divisionResult['name']][$teamGuest['name']] = $matchResult['countGoalTeamGuest'] . ":"
+                            . $matchResult['countGoalTeamHome'];
                     }
                 }
-                $matchRow['score'] = $divisionResult->points;
+                $matchRow['score'] = $divisionResult['points'];
             }
-            $tableRow['results'][] = $matchRow;
+            $tableRow->results[] = $matchRow;
         }
     }
 }

@@ -45,14 +45,15 @@ class TournamentMatchRepository extends ServiceEntityRepository
 //        $query->bindParam("id_tournament", $tournamentId);
 //        $query->bindParam("id_stage", $stageId);
 //        return $query->executeQuery()->fetchAllAssociative();
-        $statement = $this->createQueryBuilder('m')->addSelect(
-            'select * from App\Entity\TournamentMatch where 
-            (id_team_home = :team_home OR id_team_guest = :team_guest) AND (id_tournament = :id_tournament and id_stage = :id_stage) order by id asc'
+        $statement = $this->_em->createQuery(
+            'select tr from App\Entity\TournamentMatch tr where 
+            (tr.idTeamHome = :team_home OR tr.idTeamGuest = :team_guest) AND (tr.tournamentId = :id_tournament and tr.stageId = :id_stage) 
+            order by tr.id asc'
         );
         $statement->setParameter("team_home", $idTeam);
         $statement->setParameter("team_guest", $idTeam);
         $statement->setParameter("id_tournament", $tournamentId);
         $statement->setParameter("id_stage", $stageId);
-        return $statement->getQuery()->getArrayResult();
+        return $statement->getArrayResult();
     }
 }
