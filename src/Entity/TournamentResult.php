@@ -52,6 +52,12 @@ class TournamentResult
      */
     private float $points;
 
+    public function __construct(Tournament $tournament, Team $team, int $point)
+    {
+        $this->setTournament($tournament);
+        $this->setTeam($team);
+        $this->setPoints($point);
+    }
 
     public function getTeam(): ?Team
     {
