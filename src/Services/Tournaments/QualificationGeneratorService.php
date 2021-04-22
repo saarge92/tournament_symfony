@@ -3,6 +3,8 @@
 namespace App\Services\Tournaments;
 
 use App\Dto\MatchCreateDto;
+use App\Dto\Responses\QualificationGenerationResponse;
+use App\Dto\Responses\TableQualificationElement;
 use App\Entity\Team;
 use App\Entity\TournamentMatch;
 use App\Interfaces\Matches\MatchServiceInterface;
@@ -42,7 +44,7 @@ class QualificationGeneratorService implements QualificationGeneratorServiceInte
     /**
      * @throws \Exception
      */
-    public function generateQualificationGames(): array
+    public function generateQualificationGames(): QualificationGenerationResponse
     {
         $tournament = $this->tournamentRepository->getRandomTournament();
         if (!$tournament) {
@@ -58,9 +60,9 @@ class QualificationGeneratorService implements QualificationGeneratorServiceInte
 
         $this->entityManager->beginTransaction();
         try {
-            $response = [];
-            $response['tournament_id'] = $tournament->getId();
-            $response['tournament_name'] = $tournament->getName();
+            $response = new QualificationGenerationResponse();
+            $response->tournamentId = $tournament->getId();
+            $response->tournamentName = $tournament->getName();
 
             $this->generateMatchesResponseForAllDivisions($tournament->getId(), $response);
         } catch (\Exception $ex) {
@@ -71,12 +73,15 @@ class QualificationGeneratorService implements QualificationGeneratorServiceInte
         return $response;
     }
 
-    private function generateMatchesResponseForAllDivisions(int $idTournament, array &$response): void
-    {
+    private function generateMatchesResponseForAllDivisions(
+        int $idTournament,
+        QualificationGenerationResponse &$response
+    ): void {
         $divisions = $this->divisionRepository->findAll();
         foreach ($divisions as $division) {
-            $tableRow['division_id'] = $division->getId();
-            $tableRow['division_name'] = $division->getName();
+            $tableRow = new TableQualificationElement();
+            $tableRow->divisionId = $division->getId();
+            $tableRow->divisionName = $division->getName();
             $teams = $division->getTeams()->toArray();
 
             /**@var Team $teamHome */
@@ -136,11 +141,10 @@ class QualificationGeneratorService implements QualificationGeneratorServiceInte
                     $teamRow['score'] = 0;
                     $this->tournamentResultService->createTeamResult($teamHome->getId(), $idTournament, 0);
                 }
-                $tableRow['results'][] = $teamRow;
+                $tableRow->results[] = $teamRow;
                 $teamRow = [];
             }
-            $response['tables'][] = $tableRow;
-            $tableRow = [];
+            $response->tables[] = $tableRow;
         }
     }
 
