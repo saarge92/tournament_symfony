@@ -101,20 +101,7 @@ class PlayOffService implements PlayOffServiceInterface
         $resultMatchesRow = [];
         foreach ($finalResults as $finalResult) {
             $resultMatch = $finalResult['result_match'];
-            $matchResultRow = [
-                'team_home' => [
-                    'id' => $resultMatch['idTeamHome'],
-                    'name' => $finalResult['team_home_name'],
-                    'id_division' => $finalResult['team_home_division']
-                ],
-                'team_guest' => [
-                    'id' => $resultMatch['idTeamGuest'],
-                    'name' => $finalResult['team_guest_name'],
-                    'id_division' => $finalResult['team_guest_division']
-                ],
-                'score' => $resultMatch['countGoalTeamHome'] . ":" . $resultMatch['countGoalTeamGuest']
-            ];
-            $resultMatchesRow['result_matches'][] = $matchResultRow;
+            $resultMatchesRow['result_matches'][] = $this->initOneMatchRow($resultMatch, $finalResult);
             if ($resultMatch['countGoalTeamHome'] > $resultMatch['countGoalTeamGuest']) {
                 $resultMatchesRow['team_winners'][] = [
                     'id' => $resultMatch['idTeamHome'],
@@ -185,26 +172,30 @@ class PlayOffService implements PlayOffServiceInterface
         }
     }
 
+    private function initOneMatchRow(array &$resultMatch, array $finalResult): array
+    {
+        return [
+            'team_home' => [
+                'id' => $resultMatch['idTeamHome'],
+                'name' => $finalResult['team_home_name'],
+                'id_division' => $finalResult['team_home_division']
+            ],
+            'team_guest' => [
+                'id' => $resultMatch['idTeamGuest'],
+                'name' => $finalResult['team_guest_name'],
+                'id_division' => $finalResult['team_guest_division']
+            ],
+            'score' => $resultMatch['countGoalTeamHome'] . ":" . $resultMatch['countGoalTeamGuest']
+        ];
+    }
+
     private function initQuarterResponseForTournamentResponse(iterable $finalResults, array &$response)
     {
         $response['quarter_final'] = [];
         $resultMatchesRow = [];
         foreach ($finalResults as $finalResult) {
             $resultMatch = $finalResult['result_match'];
-            $matchResultRow = [
-                'team_home' => [
-                    'id' => $resultMatch['idTeamHome'],
-                    'name' => $finalResult['team_home_name'],
-                    'id_division' => $finalResult['team_home_division']
-                ],
-                'team_guest' => [
-                    'id' => $resultMatch['idTeamGuest'],
-                    'name' => $finalResult['team_guest_name'],
-                    'id_division' => $finalResult['team_guest_division']
-                ],
-                'score' => $resultMatch['countGoalTeamHome'] . ":" . $resultMatch['countGoalTeamGuest']
-            ];
-            $resultMatchesRow['result_matches'][] = $matchResultRow;
+            $resultMatchesRow['result_matches'][] = $this->initOneMatchRow($resultMatch, $finalResult);
             if ($resultMatch['countGoalTeamHome'] > $resultMatch['countGoalTeamGuest']) {
                 $resultMatchesRow['team_winners'][] = [
                     'id' => $resultMatch['idTeamHome'],
