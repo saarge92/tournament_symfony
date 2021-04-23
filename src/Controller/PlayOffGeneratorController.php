@@ -3,15 +3,14 @@
 namespace App\Controller;
 
 use App\Interfaces\Playoffs\PlayOffGeneratorServiceInterface;
-use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use FOS\RestBundle\Controller\AbstractFOSRestController;
 use Symfony\Component\HttpFoundation\JsonResponse;
-use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 
 /**
  * @Route("/playoff")
  */
-class PlayOffGeneratorController extends AbstractController
+class PlayOffGeneratorController extends AbstractFOSRestController
 {
     protected PlayOffGeneratorServiceInterface $playOffGeneratorService;
 

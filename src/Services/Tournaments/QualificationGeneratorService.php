@@ -48,7 +48,7 @@ class QualificationGeneratorService implements QualificationGeneratorServiceInte
     {
         $tournament = $this->tournamentRepository->getRandomTournament();
         if (!$tournament) {
-            throw new \Exception("Турниры отсутсвуют в базе");
+            throw new ConflictHttpException("Турниры отсутсвуют в базе");
         }
 
         $tournamentResults = $this->qualificationTournamentService->getQualificationTournamentResult(

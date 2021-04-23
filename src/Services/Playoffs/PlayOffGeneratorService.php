@@ -17,6 +17,7 @@ use App\Repository\TournamentMatchRepository;
 use App\Repository\TournamentRepository;
 use App\Repository\TournamentResultRepository;
 use Doctrine\ORM\EntityManagerInterface;
+use Symfony\Component\HttpKernel\Exception\ConflictHttpException;
 
 class PlayOffGeneratorService implements PlayOffGeneratorServiceInterface
 {
@@ -60,7 +61,7 @@ class PlayOffGeneratorService implements PlayOffGeneratorServiceInterface
     {
         $tournament = $this->tournamentRepository->find($idTournament);
         if (!$tournament) {
-            throw new \Exception("Такой турнир не найен");
+            throw new ConflictHttpException("Такой турнир не найен");
         }
 
         $tournamentResults = $this->tournamentResultRepository->getTournamentResultByTournamentId(

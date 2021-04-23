@@ -3,14 +3,14 @@
 namespace App\Controller;
 
 use App\Interfaces\Tournaments\QualificationServiceInterface;
-use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use FOS\RestBundle\Controller\AbstractFOSRestController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\Routing\Annotation\Route;
 
 /**
  * @Route("/qualification")
  */
-class QualificationController extends AbstractController
+class QualificationController extends AbstractFOSRestController
 {
     private QualificationServiceInterface $qualificationService;
 

@@ -3,14 +3,14 @@
 namespace App\Controller;
 
 use App\Repository\TeamRepository;
-use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use FOS\RestBundle\Controller\AbstractFOSRestController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\Routing\Annotation\Route;
 
 /**
  * @Route("/team")
  */
-class TeamController extends AbstractController
+class TeamController extends AbstractFOSRestController
 {
     protected TeamRepository $teamRepository;
 
