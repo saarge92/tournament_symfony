@@ -1,15 +1,12 @@
 <?php
 
-
 namespace App\Services\Playoffs;
-
 
 use App\Entity\Tournament;
 use App\Interfaces\Playoffs\PlayOffServiceInterface;
 use App\Repository\ResultFinalRepository;
 use App\Repository\TournamentMatchRepository;
 use App\Repository\TournamentRepository;
-use Symfony\Component\HttpKernel\Exception\ConflictHttpException;
 
 class PlayOffService implements PlayOffServiceInterface
 {
@@ -27,11 +24,14 @@ class PlayOffService implements PlayOffServiceInterface
         $this->finaleRepository = $resultFinaleRepository;
     }
 
+    /**
+     * @throws \Exception
+     */
     public function getPlayOffResultsByTournamentId(int $tournamentId): array
     {
         $tournament = $this->tournamentRepository->find($tournamentId);
         if (!$tournament) {
-            throw new ConflictHttpException("Такой турнир не найден");
+            throw new \Exception("Такой турнир не найден");
         }
         return $this->generateFullReviewForTournamentPlayOff($tournament);
     }
@@ -103,11 +103,7 @@ class PlayOffService implements PlayOffServiceInterface
             $resultMatch = $finalResult['result_match'];
             $resultMatchesRow['result_matches'][] = $this->initOneMatchRow($resultMatch, $finalResult);
             if ($resultMatch['countGoalTeamHome'] > $resultMatch['countGoalTeamGuest']) {
-                $resultMatchesRow['team_winners'][] = [
-                    'id' => $resultMatch['idTeamHome'],
-                    'name' => $finalResult['team_home_name'],
-                    'id_division' => $finalResult['team_home_division']
-                ];
+                $this->initTeamWinnersHomeFromRow($resultMatchesRow, $resultMatch, $finalResult);
                 $resultMatchesRow['third_place_teams'][] = [
                     'id' => $resultMatch['idTeamGuest'],
                     'name' => $finalResult['team_guest_name'],
@@ -172,7 +168,7 @@ class PlayOffService implements PlayOffServiceInterface
         }
     }
 
-    private function initOneMatchRow(array &$resultMatch, array $finalResult): array
+    private function initOneMatchRow(array $resultMatch, array $finalResult): array
     {
         return [
             'team_home' => [
@@ -189,6 +185,15 @@ class PlayOffService implements PlayOffServiceInterface
         ];
     }
 
+    private function initTeamWinnersHomeFromRow(array &$resultMatchesRow, array $resultMatch, array $finalResult)
+    {
+        $resultMatchesRow['team_winners'][] = [
+            'id' => $resultMatch['idTeamHome'],
+            'name' => $finalResult['team_home_name'],
+            'id_division' => $finalResult['team_home_division']
+        ];
+    }
+
     private function initQuarterResponseForTournamentResponse(iterable $finalResults, array &$response)
     {
         $response['quarter_final'] = [];
@@ -197,11 +202,7 @@ class PlayOffService implements PlayOffServiceInterface
             $resultMatch = $finalResult['result_match'];
             $resultMatchesRow['result_matches'][] = $this->initOneMatchRow($resultMatch, $finalResult);
             if ($resultMatch['countGoalTeamHome'] > $resultMatch['countGoalTeamGuest']) {
-                $resultMatchesRow['team_winners'][] = [
-                    'id' => $resultMatch['idTeamHome'],
-                    'name' => $finalResult['team_home_name'],
-                    'id_division' => $finalResult['team_home_division']
-                ];
+                $this->initTeamWinnersHomeFromRow($resultMatchesRow, $resultMatch, $finalResult);
             } else {
                 if ($resultMatch['countGoalTeamHome'] < $resultMatch['countGoalTeamGuest']) {
                     $resultMatchesRow['team_winners'][] = [
