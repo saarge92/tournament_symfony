@@ -45,9 +45,9 @@ class Team implements \JsonSerializable
     private string $name;
 
     /**
-     * @ORM\Column(type="integer", nullable=true)
+     * @ORM\Column(type="integer", nullable=true,name="id_division")
      */
-    private int $id_division;
+    private int $idDivision;
 
     /**
      * @ORM\ManyToOne(targetEntity=Division::class, inversedBy="teams", fetch="LAZY", cascade={"persist"})
@@ -73,12 +73,12 @@ class Team implements \JsonSerializable
 
     public function getIdDivision(): int
     {
-        return $this->id_division;
+        return $this->idDivision;
     }
 
-    public function setIdDivision(int $id_division): void
+    public function setIdDivision(int $idDivision): void
     {
-        $this->id_division = $id_division;
+        $this->idDivision = $idDivision;
     }
 
     public function getName(): ?string
