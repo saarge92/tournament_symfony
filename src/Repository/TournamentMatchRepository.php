@@ -51,8 +51,8 @@ class TournamentMatchRepository extends ServiceEntityRepository
     {
         $queryBuilder = $this->_em->createQuery(
             "
-                select tr as result_match, t1.name as team_home_name, t2.name as team_guest_name, t1.id_division as team_home_division, 
-                t2.id_division as team_guest_division
+                select tr as result_match, t1.name as team_home_name, t2.name as team_guest_name, t1.idDivision as team_home_division, 
+                t2.idDivision as team_guest_division
                 from App\Entity\TournamentMatch tr inner join
                 App\Entity\Team t1 WITH t1.id = tr.idTeamHome 
                 inner join App\Entity\Team t2
