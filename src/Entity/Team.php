@@ -18,7 +18,7 @@ use Gedmo\SoftDeleteable\Traits\SoftDeleteableEntity;
  * @ORM\Table(name="teams")
  * @ORM\HasLifecycleCallbacks
  */
-class Team
+class Team implements \JsonSerializable
 {
     use CreatedAtTrait;
     use UpdatedAtTrait;
@@ -28,8 +28,8 @@ class Team
     {
         $this->setName($name);
         $this->setDivision($division);
-        $this->tournamentResults = new ArrayCollection();
-        $this->resultFinals = new ArrayCollection();
+        $this->tournamentResults = null;
+        $this->resultFinals = null;
     }
 
     /**
@@ -69,6 +69,16 @@ class Team
     public function getId(): int
     {
         return $this->id;
+    }
+
+    public function getIdDivision(): int
+    {
+        return $this->id_division;
+    }
+
+    public function setIdDivision(int $id_division): void
+    {
+        $this->id_division = $id_division;
     }
 
     public function getName(): ?string
@@ -153,5 +163,14 @@ class Team
         }
 
         return $this;
+    }
+
+    public function jsonSerialize(): array
+    {
+        return [
+            'id' => $this->getId(),
+            'name' => $this->getName(),
+            'id_division' => $this->getIdDivision()
+        ];
     }
 }

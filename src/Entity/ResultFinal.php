@@ -17,7 +17,7 @@ use Gedmo\SoftDeleteable\Traits\SoftDeleteableEntity;
  * @Gedmo\SoftDeleteable()
  * @ORM\Table(name="result_finals")
  */
-class ResultFinal
+class ResultFinal implements \JsonSerializable
 {
     use CreatedAtTrait;
     use UpdatedAtTrait;
@@ -46,6 +46,7 @@ class ResultFinal
      * @Id
      */
     private int $idTournament;
+
     /**
      * @ORM\Column(type="integer")
      */
@@ -58,6 +59,26 @@ class ResultFinal
         $this->setPlace($place);
     }
 
+    public function getIdTeam(): int
+    {
+        return $this->idTeam;
+    }
+
+    public function setIdTeam(int $idTeam): void
+    {
+        $this->idTeam = $idTeam;
+    }
+
+    public function getIdTournament(): int
+    {
+        return $this->idTournament;
+    }
+
+    public function setIdTournament(int $idTournament): void
+    {
+        $this->idTournament = $idTournament;
+    }
+
     public function getTeam(): Team
     {
         return $this->team;
@@ -66,7 +87,7 @@ class ResultFinal
     public function setTeam(Team $team): self
     {
         $this->team = $team;
-
+        $this->setIdTeam($team->getId());
         return $this;
     }
 
@@ -78,7 +99,7 @@ class ResultFinal
     public function setTournament(Tournament $tournament): self
     {
         $this->tournament = $tournament;
-
+        $this->setIdTournament($tournament->getId());
         return $this;
     }
 
@@ -92,5 +113,14 @@ class ResultFinal
         $this->place = $place;
 
         return $this;
+    }
+
+    public function jsonSerialize(): array
+    {
+        return [
+            'id_team' => $this->getIdTeam(),
+            'id_tournament' => $this->getIdTournament(),
+            'place' => $this->getPlace()
+        ];
     }
 }

@@ -38,9 +38,12 @@ class MatchService implements MatchServiceInterface
      */
     public function addMatchInfo(MatchCreateDto $matchCreateDto): TournamentMatch
     {
-        $division = $this->divisionRepository->find($matchCreateDto->idDivision);
-        if (!$division) {
-            throw new \Exception("Дивизион с таким id_division не найден");
+        $division = null;
+        if ($matchCreateDto->idDivision) {
+            $division = $this->divisionRepository->find($matchCreateDto->idDivision);
+            if (!$division) {
+                throw new \Exception("Дивизион с таким id_division не найден");
+            }
         }
 
         $teamHome = $this->teamRepository->find($matchCreateDto->idTeamHome);

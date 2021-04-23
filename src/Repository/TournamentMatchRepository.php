@@ -35,16 +35,6 @@ class TournamentMatchRepository extends ServiceEntityRepository
      */
     public function getMatchesByTeamIdAndTournament(int $idTeam, int $tournamentId, int $stageId): array
     {
-//        $sql = "
-//            SELECT * from matches where (id_team_home = :team_home OR id_team_guest = :team_guest) AND (id_tournament = :id_tournament and id_stage = :id_stage)
-//            order by id asc
-//        ";
-//        $query = $this->getEntityManager()->getConnection()->prepare($sql);
-//        $query->bindParam("team_home", $idTeam);
-//        $query->bindParam("team_guest", $idTeam);
-//        $query->bindParam("id_tournament", $tournamentId);
-//        $query->bindParam("id_stage", $stageId);
-//        return $query->executeQuery()->fetchAllAssociative();
         $statement = $this->_em->createQuery(
             'select tr from App\Entity\TournamentMatch tr where 
             (tr.idTeamHome = :team_home OR tr.idTeamGuest = :team_guest) AND (tr.tournamentId = :id_tournament and tr.stageId = :id_stage) 
@@ -55,5 +45,22 @@ class TournamentMatchRepository extends ServiceEntityRepository
         $statement->setParameter("id_tournament", $tournamentId);
         $statement->setParameter("id_stage", $stageId);
         return $statement->getArrayResult();
+    }
+
+    public function getMatchesByTournamentForStages(int $tournamentId, array $stages): array
+    {
+        $queryBuilder = $this->_em->createQuery(
+            "
+                select tr as result_match, t1.name as team_home_name, t2.name as team_guest_name, t1.id_division as team_home_division, 
+                t2.id_division as team_guest_division
+                from App\Entity\TournamentMatch tr inner join
+                App\Entity\Team t1 WITH t1.id = tr.idTeamHome 
+                inner join App\Entity\Team t2
+                WITH t2.id = tr.idTeamGuest
+                where tr.stageId in (:stage) order by t1.id, t2.id
+        "
+        );
+        $queryBuilder->setParameter("stage", $stages);
+        return $queryBuilder->getArrayResult();
     }
 }

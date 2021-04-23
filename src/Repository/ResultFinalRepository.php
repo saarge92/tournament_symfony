@@ -24,7 +24,7 @@ class ResultFinalRepository extends ServiceEntityRepository
      */
     public function getFinaleResultByTournamentId(int $idTournament): array
     {
-        return $this->findBy(['idTournament' => $idTournament], ['place' => 'desc']);
+        return $this->findBy(['idTournament' => $idTournament], ['place' => 'asc']);
     }
 
     /**
