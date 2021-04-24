@@ -45,4 +45,17 @@ class TournamentResultRepository extends ServiceEntityRepository
         $statement->bindParam('tournament_id', $tournamentId);
         return $statement->executeQuery()->fetchAllAssociative();
     }
+
+    /**
+     * @throws \Doctrine\ORM\NonUniqueResultException
+     */
+    public function getRandomResult(): ?TournamentResult
+    {
+        return $this->createQueryBuilder('q')
+            ->addSelect('RAND() as HIDDEN rand')
+            ->addOrderBy('rand')
+            ->setMaxResults(1)
+            ->getQuery()
+            ->getOneOrNullResult();
+    }
 }
