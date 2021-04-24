@@ -10,7 +10,7 @@ class JsonException
     public function onKernelException(ExceptionEvent $event): void
     {
         $exception = $event->getThrowable();
-        $code = $exception instanceof \HttpException ? $exception->getCode() : 500;
+        $code = $exception->getCode() ?? 500;
         $responseData = [
             'error' => [
                 'code' => $exception->getCode(),

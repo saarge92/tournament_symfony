@@ -31,7 +31,7 @@ class PlayOffService implements PlayOffServiceInterface
     {
         $tournament = $this->tournamentRepository->find($tournamentId);
         if (!$tournament) {
-            throw new \Exception("Такой турнир не найден");
+            throw new \Exception("Такой турнир не найден", 409);
         }
         return $this->generateFullReviewForTournamentPlayOff($tournament);
     }
