@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Tests;
+namespace App\Tests\Unit;
 
 use App\Dto\MatchCreateDto;
 use App\Entity\Division;
@@ -14,9 +14,7 @@ use App\Repository\TeamRepository;
 use App\Repository\TournamentMatchRepository;
 use App\Repository\TournamentRepository;
 use App\Services\Matches\MatchService;
-use Doctrine\Common\Collections\Criteria;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
-
 
 class MatchServiceTest extends KernelTestCase
 {
