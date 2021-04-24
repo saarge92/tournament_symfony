@@ -62,7 +62,7 @@ class MatchServiceTest extends KernelTestCase
         );
 
         $response = $matchService->addMatchInfo($data);
-
+        $matchRepositoryMock->method('save')->with($data);
         $this->assertInstanceOf(TournamentMatch::class, $response);
 
         $this->assertNotNull($matchService);
