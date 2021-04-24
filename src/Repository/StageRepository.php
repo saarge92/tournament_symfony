@@ -18,4 +18,17 @@ class StageRepository extends ServiceEntityRepository
     {
         parent::__construct($registry, Stage::class);
     }
+
+    /**
+     * @throws \Doctrine\ORM\NonUniqueResultException
+     */
+    public function getRandomStage(): ?Stage
+    {
+        return $this->createQueryBuilder('q')
+            ->addSelect('RAND() as HIDDEN rand')
+            ->addOrderBy('rand')
+            ->setMaxResults(1)
+            ->getQuery()
+            ->getOneOrNullResult();
+    }
 }

@@ -3,24 +3,37 @@
 namespace App\Tests;
 
 use App\Dto\MatchCreateDto;
+use App\Entity\Division;
+use App\Entity\Stage;
+use App\Entity\Team;
+use App\Entity\Tournament;
 use App\Entity\TournamentMatch;
 use App\Repository\DivisionRepository;
+use App\Repository\StageRepository;
+use App\Repository\TeamRepository;
 use App\Repository\TournamentMatchRepository;
+use App\Repository\TournamentRepository;
 use App\Services\Matches\MatchService;
-use Doctrine\ORM\EntityManager;
+use Doctrine\Common\Collections\Criteria;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 
 
 class MatchServiceTest extends KernelTestCase
 {
     private DivisionRepository $divisionRepository;
+    private TournamentRepository $tournamentRepository;
+    private TeamRepository $teamRepository;
+    private StageRepository $stageRepository;
 
     protected function setUp(): void
     {
         parent::setUp();
-        self::bootKernel(['environment' => 'test']);
+        self::bootKernel();
         $entityManager = self::$container->get('doctrine')->getManager();
-        $this->divisionRepository = $entityManager->getRepository(DivisionRepository::class);
+        $this->divisionRepository = $entityManager->getRepository(Division::class);
+        $this->tournamentRepository = $entityManager->getRepository(Tournament::class);
+        $this->teamRepository = $entityManager->getRepository(Team::class);
+        $this->stageRepository = $entityManager->getRepository(Stage::class);
     }
 
     /**
@@ -31,26 +44,25 @@ class MatchServiceTest extends KernelTestCase
         $matchService = $this->getMatchService();
         $matchRepositoryMock = $this->createMock(TournamentMatchRepository::class);
         $division = $this->divisionRepository->getRandomDivision();
-        $tournament = Tournament::orderByRaw("RAND()")->first();
-        $team_home = Team::orderByRaw("RAND()")->first();
-        $team_guest = Team::whereRaw("id != ?", [$team_home->id])->first();
-        $stage = Stage::orderByRaw("RAND()")->first();
+        $tournament = $this->tournamentRepository->getRandomTournament();
+        $teamHome = $this->teamRepository->getRandomTeam();
+        $teamGuest = $this->teamRepository->findOneByIdNotEqual($teamHome->getId())[0];
+        $stage = $this->stageRepository->getRandomStage();
         $countGoalsHome = rand(1, 10);
         $countGoalsGuest = rand(1, 10);
 
-        $data = [
-            'id_division' => $division->id,
-            'id_tournament' => $tournament->id,
-            'id_team_home' => $team_home->id,
-            'id_team_guest' => $team_guest->id,
-            'id_stage' => $stage->id,
-            'count_goal_team_home' => $countGoalsHome,
-            'count_goal_team_guest' => $countGoalsGuest
-        ];
-        $data = new MatchCreateDto();
+        $data = new MatchCreateDto(
+            $division->getId(),
+            $teamHome->getId(),
+            $teamGuest['id'],
+            $tournament->getId(),
+            $stage->getId(),
+            $countGoalsHome,
+            $countGoalsGuest
+        );
 
         $response = $matchService->addMatchInfo($data);
-        $matchRepositoryMock->shouldReceive('createMatch')->with($data);
+
         $this->assertInstanceOf(TournamentMatch::class, $response);
 
         $this->assertNotNull($matchService);

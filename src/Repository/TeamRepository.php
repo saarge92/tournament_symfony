@@ -26,4 +26,29 @@ class TeamRepository extends ServiceEntityRepository
     {
         return $this->findBy(['idDivision' => $divisionId], ['id' => 'desc']);
     }
+
+    /**
+     * @throws \Doctrine\ORM\NonUniqueResultException
+     */
+    public function getRandomTeam(): ?Team
+    {
+        return $this->createQueryBuilder('q')
+            ->addSelect('RAND() as HIDDEN rand')
+            ->addOrderBy('rand')
+            ->setMaxResults(1)
+            ->getQuery()
+            ->getOneOrNullResult();
+    }
+
+    /**
+     * @throws \Doctrine\ORM\NonUniqueResultException
+     */
+    public function findOneByIdNotEqual(int $idValue): array
+    {
+        $qb = $this->createQueryBuilder('t');
+        $qb->where($qb->expr()->neq('t.id', ':id'));
+        $qb->setParameter("id", $idValue);
+        return $qb->getQuery()
+            ->getArrayResult();
+    }
 }
