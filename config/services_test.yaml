@@ -1,5 +1,6 @@
 services:
-  match.service:
-    class: App\Services\Matches\MatchService
-    public: true
+  App\Services\:
+    resource: '../src/Services/'
+    autoconfigure: true
     autowire: true
+    public: true

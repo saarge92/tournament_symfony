@@ -71,6 +71,6 @@ class MatchServiceTest extends KernelTestCase
     private function getMatchService(): MatchService
     {
         $container = self::$kernel->getContainer();
-        return $container->get('match.service');
+        return $container->get(MatchService::class);
     }
 }
