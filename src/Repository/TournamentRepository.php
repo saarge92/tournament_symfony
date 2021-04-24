@@ -44,7 +44,10 @@ class TournamentRepository extends ServiceEntityRepository
         )->getQuery()->getResult();
     }
 
-    public function getRandomTournament(): Tournament
+    /**
+     * @throws \Doctrine\ORM\NonUniqueResultException
+     */
+    public function getRandomTournament(): ?Tournament
     {
         return $this->createQueryBuilder('q')
             ->addSelect('RAND() as HIDDEN rand')

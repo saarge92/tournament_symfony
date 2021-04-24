@@ -27,4 +27,17 @@ class DivisionRepository extends ServiceEntityRepository
         $this->_em->persist($division);
         $this->_em->flush();
     }
+
+    /**
+     * @throws \Doctrine\ORM\NonUniqueResultException
+     */
+    public function getRandomDivision(): ?Division
+    {
+        return $this->createQueryBuilder('q')
+            ->addSelect('RAND() as HIDDEN rand')
+            ->addOrderBy('rand')
+            ->setMaxResults(1)
+            ->getQuery()
+            ->getOneOrNullResult();
+    }
 }

@@ -1,0 +1,5 @@
+services:
+  match.service:
+    class: App\Services\Matches\MatchService
+    public: true
+    autowire: true
