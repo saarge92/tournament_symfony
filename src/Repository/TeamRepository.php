@@ -24,7 +24,7 @@ class TeamRepository extends ServiceEntityRepository
      */
     public function getTeamByDivisionId(int $divisionId): array
     {
-        return $this->findBy(['idDivision' => $divisionId], ['id' => 'desc']);
+        return $this->findBy(['idDivision' => $divisionId], ['id' => 'asc']);
     }
 
     /**

@@ -85,9 +85,8 @@ export default {
       this.tournamentId = tournamentResults.tournamentId;
       this.firstDivisionResults = tournamentResults.tables[0].results
       this.firstDivisionName = tournamentResults.tables[0].divisionName
-      console.log('super jet', tournamentResults)
-      this.firstDivisionTeams = await getTeamsByDivision(tournamentResults.tables[0].divisionId)
 
+      this.firstDivisionTeams = await getTeamsByDivision(tournamentResults.tables[0].divisionId)
       this.secondDivisionName = tournamentResults.tables[1].divisionName;
       this.secondDivisionTeams = await getTeamsByDivision(tournamentResults.tables[1].divisionId)
       this.secondDivisionResults = tournamentResults.tables[1].results;
