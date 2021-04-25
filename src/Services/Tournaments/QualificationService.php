@@ -97,7 +97,7 @@ class QualificationService implements QualificationServiceInterface
         array $divisionResults,
         Tournament $tournament,
         TableQualificationElement &$tableRow
-    ) {
+    ): void {
         foreach ($divisionResults as $divisionResult) {
             $matchRow = [];
             $matchResults = $this->matchRepository->getMatchesByTeamIdAndTournament(

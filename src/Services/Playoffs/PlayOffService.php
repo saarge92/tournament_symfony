@@ -194,7 +194,7 @@ class PlayOffService implements PlayOffServiceInterface
         ];
     }
 
-    private function initQuarterResponseForTournamentResponse(iterable $finalResults, array &$response)
+    private function initQuarterResponseForTournamentResponse(iterable $finalResults, array &$response): void
     {
         $response['quarter_final'] = [];
         $resultMatchesRow = [];
