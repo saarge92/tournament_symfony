@@ -18,7 +18,6 @@ use App\Repository\TournamentMatchRepository;
 use App\Repository\TournamentRepository;
 use App\Repository\TournamentResultRepository;
 use Doctrine\ORM\EntityManagerInterface;
-use Symfony\Component\HttpKernel\Exception\ConflictHttpException;
 
 class PlayOffGeneratorService implements PlayOffGeneratorServiceInterface
 {
@@ -247,7 +246,7 @@ class PlayOffGeneratorService implements PlayOffGeneratorServiceInterface
         $gamePlans = [0 => 3, 1 => 2, 2 => 1, 3 => 0];
         $countDivisions = array_keys($tournamentResults);
         if (count($countDivisions) < 2) {
-            throw new \Exception(
+            throw new ServerException(
                 "Невозможно провести четвертьфинал между дивизионами. Дивизионов должно быть всего два!"
             );
         }

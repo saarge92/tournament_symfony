@@ -49,18 +49,29 @@ class TournamentMatchRepository extends ServiceEntityRepository
 
     public function getMatchesByTournamentForStages(int $tournamentId, array $stages): array
     {
+//        return DB::table('matches as m')
+//            ->join('teams as t1', 't1.id', '=', 'm.id_team_home')
+//            ->join('teams  as t2', 't2.id', '=', 'm.id_team_guest')
+//            ->where(['m.id_tournament' => $tournamentId])
+//            ->whereIn('id_stage', $stages)
+//            ->selectRaw('t1.name as team_home_name, t2.name as team_guest_name,
+//                                  t1.id_division as team_home_division, t2.id_division as team_guest_division, m.*')
+//            ->orderBy('t1.id')->orderBy('t2.id')
+//            ->get();
         $queryBuilder = $this->_em->createQuery(
             "
                 select tr as result_match, t1.name as team_home_name, t2.name as team_guest_name, t1.idDivision as team_home_division, 
                 t2.idDivision as team_guest_division
                 from App\Entity\TournamentMatch tr inner join
-                App\Entity\Team t1 WITH t1.id = tr.idTeamHome 
+                App\Entity\Team t1 WITH tr.idTeamHome = t1.id
                 inner join App\Entity\Team t2
                 WITH t2.id = tr.idTeamGuest
-                where tr.stageId in (:stage) order by t1.id, t2.id
+                where tr.tournamentId = :tournamentId and tr.stageId in (:stage) 
+                order by t1.id, t2.id
         "
         );
         $queryBuilder->setParameter("stage", $stages);
+        $queryBuilder->setParameter("tournamentId", $tournamentId);
         return $queryBuilder->getArrayResult();
     }
 }
