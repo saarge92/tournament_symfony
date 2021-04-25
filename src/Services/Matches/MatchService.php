@@ -4,6 +4,7 @@ namespace App\Services\Matches;
 
 use App\Dto\MatchCreateDto;
 use App\Entity\TournamentMatch;
+use App\Exceptions\ServerException;
 use App\Interfaces\Matches\MatchServiceInterface;
 use App\Repository\DivisionRepository;
 use App\Repository\StageRepository;
@@ -42,32 +43,32 @@ class MatchService implements MatchServiceInterface
         if ($matchCreateDto->idDivision) {
             $division = $this->divisionRepository->find($matchCreateDto->idDivision);
             if (!$division) {
-                throw new \Exception("Дивизион с таким id_division не найден");
+                throw new ServerException("Дивизион с таким id_division не найден");
             }
         }
 
         $teamHome = $this->teamRepository->find($matchCreateDto->idTeamHome);
         if (!$teamHome) {
-            throw new \Exception("Отсутсвует такая команда с id_team_home");
+            throw new ServerException("Отсутсвует такая команда с id_team_home");
         }
 
         $teamGuest = $this->teamRepository->find($matchCreateDto->idTeamGuest);
         if (!$teamGuest) {
-            throw new \Exception("Команда с таким id_team_guest не найдена");
+            throw new ServerException("Команда с таким id_team_guest не найдена");
         }
 
         if ($matchCreateDto->countGoalTeamHome < 0 || $matchCreateDto->countGoalTeamGuest < 0) {
-            throw new \Exception("Счет не может быть отрицательным");
+            throw new ServerException("Счет не может быть отрицательным");
         }
 
         $stage = $this->stageRepository->find($matchCreateDto->idStage);
         if (!$stage) {
-            throw new \Exception('Этап соревнований с таким id_stage не найден');
+            throw new ServerException('Этап соревнований с таким id_stage не найден');
         }
 
         $tournament = $this->tournamentRepository->find($matchCreateDto->idTournament);
         if (!$tournament) {
-            throw new \Exception('Турнир не найден с таким id_tournament');
+            throw new ServerException('Турнир не найден с таким id_tournament');
         }
 
         $tournamentMatch = new TournamentMatch(

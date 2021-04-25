@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Controller;
+namespace App\Controller\Api;
 
 use App\Interfaces\Tournaments\QualificationGeneratorServiceInterface;
 use FOS\RestBundle\Controller\AbstractFOSRestController;
@@ -8,7 +8,7 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\Routing\Annotation\Route;
 
 /**
- * @Route("/qualification")
+ * @Route("/api/qualification")
  */
 class QualificationGeneratorController extends AbstractFOSRestController
 {
