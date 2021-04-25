@@ -3,6 +3,7 @@
 namespace App\Services\Tournaments;
 
 use App\Entity\TournamentResult;
+use App\Exceptions\ServerException;
 use App\Interfaces\Tournaments\TournamentResultServiceInterface;
 use App\Repository\TeamRepository;
 use App\Repository\TournamentRepository;
@@ -31,20 +32,20 @@ class TournamentResultService implements TournamentResultServiceInterface
     {
         $tournament = $this->tournamentRepository->find($idTournament);
         if (!$tournament) {
-            throw new \Exception("Такой турнир отсутсвует в базе");
+            throw new ServerException("Такой турнир отсутсвует в базе");
         }
         $existedTeamTournament = $this->tournamentResultRepository->findOneBy(
-            ['id_team' => $idTeam, 'id_tournament' => $idTournament]
+            ['idTeam' => $idTeam, 'idTournament' => $idTournament]
         );
         if ($existedTeamTournament) {
-            throw new \Exception("Данные турнира для этой команды уже существует");
+            throw new ServerException("Данные турнира для этой команды уже существует");
         }
         $team = $this->teamRepository->find($idTeam);
         if (!$team) {
-            throw new \Exception("Такая команда не найдена");
+            throw new ServerException("Такая команда не найдена");
         }
         if ($points < 0) {
-            throw new \Exception("Очки не могут быть отрицательными");
+            throw new ServerException("Очки не могут быть отрицательными");
         }
         $tournamentResult = new TournamentResult($tournament, $team, $points);
         $this->tournamentResultRepository->save($tournamentResult);
@@ -57,16 +58,16 @@ class TournamentResultService implements TournamentResultServiceInterface
     public function updateTeamResult(int $idTeam, int $idTournament, int $newPoint): TournamentResult
     {
         if ($newPoint < 0) {
-            throw new \Exception("Присваиваемые очки не могут быть отрицательными");
+            throw new ServerException("Присваиваемые очки не могут быть отрицательными");
         }
 
         $tournament = $this->tournamentRepository->find($idTournament);
         if (!$tournament) {
-            throw new \Exception("Такой турнир отсутсвует в базе");
+            throw new ServerException("Такой турнир отсутсвует в базе");
         }
         $team = $this->teamRepository->find($idTeam);
         if (!$team) {
-            throw new \Exception("Такая команда не найден");
+            throw new ServerException("Такая команда не найден");
         }
 
         $existedRecordTeamResult = $this->tournamentResultRepository->findOneBy(

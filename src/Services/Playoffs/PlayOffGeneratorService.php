@@ -7,6 +7,7 @@ use App\Entity\ResultFinal;
 use App\Entity\Team;
 use App\Entity\Tournament;
 use App\Entity\TournamentMatch;
+use App\Exceptions\ServerException;
 use App\Interfaces\Matches\MatchServiceInterface;
 use App\Interfaces\Playoffs\PlayOffGeneratorServiceInterface;
 use App\Interfaces\Playoffs\PlayOffServiceInterface;
@@ -61,7 +62,7 @@ class PlayOffGeneratorService implements PlayOffGeneratorServiceInterface
     {
         $tournament = $this->tournamentRepository->find($idTournament);
         if (!$tournament) {
-            throw new ConflictHttpException("Такой турнир не найен");
+            throw new ServerException("Такой турнир не найен");
         }
 
         $tournamentResults = $this->tournamentResultRepository->getTournamentResultByTournamentId(

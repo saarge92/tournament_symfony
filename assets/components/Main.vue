@@ -76,10 +76,10 @@ export default {
         this.isLoading = false
         alert(error)
       })
-      console.log(this.playOffResults)
       this.isLoading = false;
     },
     async fillDataAboutQualification(tournamentResults) {
+      console.log(tournamentResults)
       this.tables = tournamentResults.tables
       this.tournamentName = tournamentResults.tournamentName;
       this.tournamentId = tournamentResults.tournamentId;
